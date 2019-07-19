@@ -1,14 +1,18 @@
+{% extends "base.html" %}
 
-{% extends "layout.html" %}
+{% block title %}TimeClock - Page Not Found{% endblock %}
 
-{% block page_title %}Server error{% endblock %}
-
-{% block content %}
-<div class="jumbotron">
-    <div class="text-center">
-        <h1>500</h1>
-        <p>Sorry, something went wrong on our system. Don't panic, we are fixing it! Please try again later.</p>
+{% block page_content %}
+    <div class="page-header">
+        <h1 style="font-family: 'Sofia Pro Soft'; -webkit-font-smoothing: antialiased"> INTERNAL SERVER ERROR
+            (500) </h1>
     </div>
-</div>
-{% endblock %}
 
+
+    <div>
+        <h3 style="font-family: 'Sofia Pro Soft'; -webkit-font-smoothing: antialiased">Uh oh, it looks like something
+            went wrong!</h3>
+        <h4 style="font-family: 'Sofia Pro Soft'; -webkit-font-smoothing: antialiased">If you believe this is an error,
+            please contact the site administrator.</h4>
+    </div>
+{% endblock %}

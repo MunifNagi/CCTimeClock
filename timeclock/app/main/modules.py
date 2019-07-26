@@ -8,7 +8,7 @@ from flask_login import current_user
 from .pdf import generate_header, generate_employee_info, generate_timetable, generate_signature_template, \
     generate_footer
 from app.database import db
-from ..email_notification import send_email
+from app.email_notification import send_email
 from app.user.models import User, Event, Tag, Vacation
 
 
@@ -156,7 +156,7 @@ def get_events_by_date(email=None, first_date_input=None, last_date_input=None, 
                             format(session['first_date'], session['last_date']))
     events_query = Event.query.filter(
         Event.time >= first_date,
-        Event.time <= last_date + timedelta(days=1))
+        Event.time <= last_date)
     current_app.logger.info('Finished querying for all events between provided dates')
 
     # Tag processing - This takes a while

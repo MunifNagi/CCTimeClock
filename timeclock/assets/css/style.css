@@ -4,7 +4,7 @@
 
 /* universal */
 
-html {
+/* html {
   overflow-y: scroll;
 }
 
@@ -27,7 +27,7 @@ textarea {
 
 /* Forms */
 
-.navbar-form input[type="text"],
+/* .navbar-form input[type="text"],
 .navbar-form input[type="password"] {
   width: 180px;
 }
@@ -45,11 +45,11 @@ textarea {
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
-}
+} */
 
 /* footer */
 
-footer {
+/* footer {
   margin-top: 45px;
   padding-top: 5px;
   border-top: 1px solid #eaeaea;
@@ -83,4 +83,104 @@ footer .footer-nav {
   float: right;
   margin-right: 25px;
   list-style: none;
+} */ 
+@media all {
+  .page {
+      width: 21cm;
+      min-height: 29.7cm;
+      padding: 2cm;
+      margin: 1cm auto;
+      border: 1px #D3D3D3 solid;
+      border-radius: 5px;
+      background: white;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      font-family: "Sofia Pro Soft";
+      position: relative
+  }
+
+  .sign-line {
+      float: right;
+      margin-top: 16px;
+      margin-left: 3px;
+      height: 1px;
+      background-color: black;
+  }
+
+  #footer {
+      position: absolute;
+      bottom: 15px;
+      width: 18cm;
+  }
+}
+
+.subpage {
+  padding: 1cm;
+  border: 5px red solid;
+  height: 256mm;
+  outline: 2cm #FFEAEA solid;
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  html, body {
+      width: 210mm;
+      height: 297mm;
+  }
+
+  .page {
+      margin: 0;
+      border: initial;
+      border-radius: initial;
+      min-height: initial;
+      box-shadow: initial;
+      background: initial;
+      page-break-after: always;
+  }
+
+  .sign-line {
+      float: right;
+      margin-top: 16px;
+      margin-left: 3px;
+      height: 1px;
+      background-color: black;
+  }
+
+  #footer {
+      position: absolute;
+      bottom: 15px;
+      width: 18cm;
+  }
+
+  .header-element-left {
+      float: left;
+      font-size: 16px;
+      margin-right: 10px;
+  }
+}
+@font-face {
+  font-family: "Sofia Pro Soft";
+  src: url('../Sofia Pro Soft Regular.otf');
+  font-weight: bold;
+}
+
+.navbar-inner {
+  /*For IE Compatibility*/
+  filter: none;
+}
+
+.empty-query {
+  border: 1px solid #2a6496;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+  float: none;
+  margin: 0 auto;
+}
+
+body {
+  font-family: "Sofia Pro Soft";
 }

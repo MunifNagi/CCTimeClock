@@ -15,7 +15,8 @@ from app.extensions import (
     login_manager,
     migrate,
     webpack,
-    bootstrap
+    bootstrap,
+    moment
 )
 
 
@@ -46,6 +47,7 @@ def register_extensions(app):
     migrate.init_app(app, db)
     webpack.init_app(app)
     bootstrap.init_app(app)
+    moment.init_app(app)
     return None
 
 

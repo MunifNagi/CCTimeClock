@@ -1,5 +1,2 @@
-from flask import Blueprint
-
-auth = Blueprint('auth', __name__)
-
+"""The auth module."""
 from . import views

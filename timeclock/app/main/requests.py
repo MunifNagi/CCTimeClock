@@ -8,7 +8,7 @@ import sqlalchemy
 from flask import current_app
 from flask_login import current_user
 
-from .. import db
+from app.database import db
 from ..email_notification import send_email
 from app.user.models import User, Event, Vacation
 

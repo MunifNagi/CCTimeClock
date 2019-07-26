@@ -7,7 +7,7 @@ from flask_login import current_user
 
 from .pdf import generate_header, generate_employee_info, generate_timetable, generate_signature_template, \
     generate_footer
-from .. import db
+from app.database import db
 from ..email_notification import send_email
 from app.user.models import User, Event, Tag, Vacation
 

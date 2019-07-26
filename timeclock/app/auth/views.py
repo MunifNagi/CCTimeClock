@@ -6,13 +6,12 @@
 """
 from datetime import datetime
 
-from flask import current_app, jsonify
+from flask import Blueprint, current_app, jsonify
 from flask import render_template, redirect, request, url_for, flash, session
 from flask_login import login_required, login_user, logout_user, current_user
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import check_password_hash
 
-from . import auth
 from .forms import (
     LoginForm,
     RegistrationForm,
@@ -28,6 +27,8 @@ from ..decorators import admin_required
 from ..email_notification import send_email
 from app.user.models import User, Role
 from app.utils import InvalidResetToken
+
+auth = Blueprint('auth', __name__)
 
 
 @auth.route('/admin_register', methods=['GET', 'POST'])

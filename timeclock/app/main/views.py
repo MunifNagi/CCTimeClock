@@ -8,6 +8,7 @@ from datetime import datetime
 
 from flask import current_app
 from flask import (
+    Blueprint,
     render_template,
     flash,
     request,
@@ -18,7 +19,6 @@ from flask import (
 )
 from flask_login import login_required, current_user
 
-from . import main
 from .forms import (
     AdminFilterEventsForm,
     UserFilterEventsForm,
@@ -61,10 +61,12 @@ from .requests import (
     approve_or_deny,
     approve_or_deny_vacation
 )
-from .. import db
+from app.database import db
 from ..decorators import admin_required
 from app.user.models import Pay, User, Vacation
 from app.utils import eval_request_bool
+
+main = Blueprint("main", __name__, static_folder="../static")
 
 
 @main.route('/', methods=['GET', 'POST'])

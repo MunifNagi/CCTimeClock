@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """Public forms."""
-from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField
-from wtforms.validators import DataRequired
+from datetime import date, datetime
+
+from flask_wtf import Form
+from wtforms import PasswordField, StringField, SubmitField, DateField, SelectField, FloatField, SelectMultipleField
+from wtforms.validators import DataRequired, Length, Optional, Email
 
 from app.user.models import User
 from app.utils import tags, divisions, roles

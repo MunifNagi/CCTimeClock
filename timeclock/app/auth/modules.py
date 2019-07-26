@@ -13,8 +13,8 @@ from flask_login import current_user
 from werkzeug.security import check_password_hash
 from datetime import datetime
 
-from .. import db
-from ..email_notification import send_email
+from app.database import db
+from app.email_notification import send_email
 from app.user.models import User, Role, ChangeLog
 from app.utils import tags
 

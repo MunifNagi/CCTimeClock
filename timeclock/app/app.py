@@ -4,7 +4,7 @@ import logging
 import sys
 
 from flask import Flask, render_template
-
+from flask_bootstrap import Bootstrap
 from app import commands, main, user, auth
 from app.extensions import (
     bcrypt,
@@ -15,6 +15,7 @@ from app.extensions import (
     login_manager,
     migrate,
     webpack,
+    bootstrap
 )
 
 
@@ -44,6 +45,7 @@ def register_extensions(app):
     debug_toolbar.init_app(app)
     migrate.init_app(app, db)
     webpack.init_app(app)
+    bootstrap.init_app(app)
     return None
 
 

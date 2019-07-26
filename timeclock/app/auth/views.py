@@ -22,9 +22,9 @@ from .forms import (
     ChangeUserDataForm
 )
 from .modules import check_password_requirements, get_supervisors_for_division, create_user, get_changelog_by_user_id, update_user_information
-from .. import db
-from ..decorators import admin_required
-from ..email_notification import send_email
+from app.database import db
+from app.decorators import admin_required
+from app.email_notification import send_email
 from app.user.models import User, Role
 from app.utils import InvalidResetToken
 

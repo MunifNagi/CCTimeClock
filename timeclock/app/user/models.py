@@ -4,14 +4,6 @@
 
 # from flask_login import UserMixin
 
-# from app.database import (
-#     Column,
-#     Model,
-#     SurrogatePK,
-#     db,
-#     reference_col,
-#     relationship,
-# )
 # from app.extensions import bcrypt
 
 
@@ -77,8 +69,14 @@ from flask import current_app, session
 from flask_login import UserMixin, AnonymousUserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
-
-from app.database import db
+from app.database import (
+    Column,
+    Model,
+    SurrogatePK,
+    db,
+    reference_col,
+    relationship,
+)
 from app.extensions import login_manager
 from app.utils import InvalidResetToken
 
@@ -169,7 +167,7 @@ class Role(db.Model):
 #         return '<Object %r>' % self.object_name
 
 
-class User(UserMixin, db.Model):
+class User(UserMixin, SurrogatePK, Model):
     """
     Specifies properties and functions of a TimeClock User.
     """

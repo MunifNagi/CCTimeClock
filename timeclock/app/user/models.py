@@ -89,7 +89,7 @@ class Permission:
     ADMINISTER = 0x80  # 0b10000000
 
 
-class Role(db.Model):
+class Role(SurrogatePK, Model):
     """
     Specifies the roles a user can have (normal User, Department Head(Moderator), Administrator).
     """
@@ -187,7 +187,7 @@ class User(UserMixin, SurrogatePK, Model):
     events = db.relationship('Event', backref='user', lazy='dynamic')
     pays = db.relationship('Pay', backref='user', lazy='dynamic')
     vacations = db.relationship('Vacation', backref='user', lazy='dynamic')
-
+    created_at = Column(db.DateTime, nullable=False, default=datetime.utcnow)
     # Supervisor
     is_supervisor = db.Column(db.Boolean, default=False)
     supervisor_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -198,16 +198,24 @@ class User(UserMixin, SurrogatePK, Model):
     object_code = db.Column(db.String)
     object_name = db.Column(db.String)
 
-    def __init__(self, **kwargs):
-        super(User, self).__init__(**kwargs)
-        if self.role is None:
-            if self.email == current_app.config['ADMIN']:
-                self.role = Role.query.filter_by(permissions=0xff).first()
-                self.validated = True
-            else:
-                self.role = Role.query.filter_by(default=True).first()
-        self.password_list = Password(p1='', p2='', p3='', p4='', p5='', last_changed=datetime.now())
-
+    def __init__(self, email="test@records.nyc.gov", password=None, **kwargs):
+       # super(User, self).__init__(**kwargs)
+        db.Model.__init__(self, email=email, **kwargs)
+        if password:
+            self.password=password
+        else:
+            self.password = None
+        # if self.role is None:
+        #     if self.email == current_app.config['ADMIN']:
+        #         self.role = Role.query.filter_by(permissions=0xff).first()
+        #         self.validated = True
+        #     else:
+        #         self.role = Role.query.filter_by(default=True).first()
+        # self.password_list = Password(p1='', p2='', p3='', p4='', p5='', last_changed=datetime.now())
+    @property
+    def full_name(self):
+        """Full user name."""
+        return "{0} {1}".format(self.first_name, self.last_name)
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
@@ -219,7 +227,8 @@ class User(UserMixin, SurrogatePK, Model):
         :param password: String to hash.
         :return: None.
         """
-        self.password_hash = generate_password_hash(password)
+        if password:
+            self.password_hash = generate_password_hash(password)
 
     # generates token with default validity for 1 hour
     def generate_reset_token(self, expiration=3600):

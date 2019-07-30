@@ -189,7 +189,7 @@ class User(UserMixin, SurrogatePK, Model):
     vacations = db.relationship('Vacation', backref='user', lazy='dynamic')
    # created_at = Column(db.DateTime, nullable=False, default=datetime.utcnow)
     # Supervisor
-    is_supervisor = db.Column(db.Boolean, default=False)
+    # is_supervisor = db.Column(db.Boolean, default=False)
     supervisor_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     supervisor = db.relationship('User', remote_side=[id])
 
@@ -212,6 +212,14 @@ class User(UserMixin, SurrogatePK, Model):
         #     else:
         #         self.role = Role.query.filter_by(default=True).first()
         # self.password_list = Password(p1='', p2='', p3='', p4='', p5='', last_changed=datetime.now())
+    @property
+    def is_supervisor(self):
+        """
+        Checks to see whether the user is a supervisor.
+        :return: True if the user is a supervisor, False otherwise.
+        """
+        supervisors=[value for value, in db.session.query(User.supervisor_id).all()]
+        return self.id in supervisors
     @property
     def full_name(self):
         """Full user name."""

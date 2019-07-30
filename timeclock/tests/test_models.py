@@ -39,3 +39,13 @@ class TestUser:
         user = User(first_name="Foo", last_name="Bar")
         assert user.full_name == "Foo Bar"
 
+    def test_supervisor(self):
+        """Get user by ID."""
+        user = User(email="test@records.nyc.gov")
+        user2= User(email="test2@records.nyc.gov")
+        user2.supervisor=user
+        user.save()
+        user2.save()
+        assert user2.supervisor_id==user.id
+        assert user2.is_supervisor==False
+        assert user.is_supervisor==True

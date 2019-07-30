@@ -211,7 +211,7 @@ class User(UserMixin, SurrogatePK, Model):
         #         self.validated = True
         #     else:
         #         self.role = Role.query.filter_by(default=True).first()
-        # self.password_list = Password(p1='', p2='', p3='', p4='', p5='', last_changed=datetime.now())
+        self.password_list = Password(p1='', p2='', p3='', p4='', p5='', last_changed=datetime.now())
     @property
     def is_supervisor(self):
         """
@@ -257,7 +257,16 @@ class User(UserMixin, SurrogatePK, Model):
         :return: True if operation is successful, false otherwise.
         """
         # checks if the new password is at least 8 characters with at least 1 UPPERCASE AND 1 NUMBER
-        if not re.match(r'^(?=.*?\d)(?=.*?[A-Z])(?=.*?[a-z])[A-Za-z\d]{8,128}$', new_password):
+        if len(new_password) < 8:
+            return False
+        score = 0
+        if re.search('\d+', new_password):
+            # If the new password contains a digit, increment score
+            score += 1
+        if re.search('[a-z]', new_password) and re.search('[A-Z]', new_password):
+            # If the new password contains lowercase and uppercase letters, increment score
+            score += 1
+        if score < 2:
             return False
         # If the password has been changed within the last second, the token is invalid.
         if (datetime.now() - self.password_list.last_changed).seconds < 1:
@@ -266,6 +275,7 @@ class User(UserMixin, SurrogatePK, Model):
         self.password = new_password
         self.password_list.update(self.password_hash)
         db.session.add(self)
+        db.session.commit()
         return True
 
     def verify_password(self, password):

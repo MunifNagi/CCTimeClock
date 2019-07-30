@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """Model unit tests."""
 import datetime as dt
+import time
 import pytest
-from app.user.models import User
+from app.user.models import User, Password
 from .factories import UserFactory
 @pytest.mark.usefixtures("db")
 class TestUser:
@@ -30,9 +31,22 @@ class TestUser:
 
     def test_verify_password(self):
         """Check password."""
-        user = User.create(password="foobarbaz123")
-        assert user.verify_password("foobarbaz123") is True
-        assert user.verify_password("barfoobaz") is False
+        user = User.create(password="Change4me")
+        assert user.verify_password("Change4me") is True
+        assert user.verify_password("change4me") is False
+    
+    def test_reset_password(self):
+        """Check password."""
+        user = User.create(password="Change4me")
+        time.sleep(1)
+        token = user.generate_reset_token() 
+        assert user.reset_password(token,"Change4me!") is True #should accept symbols
+        time.sleep(1) #It must have at least 1 number
+        assert user.reset_password(token,"Changeme!") is False 
+        time.sleep(1) #It should be at least 8 characters 
+        assert user.reset_password(token,"Change4") is False
+        time.sleep(1) #It should have at least 1 UpperCase 
+        assert user.reset_password(token,"change4me") is False
 
     def test_full_name(self):
         """User full name."""

@@ -187,7 +187,7 @@ class User(UserMixin, SurrogatePK, Model):
     events = db.relationship('Event', backref='user', lazy='dynamic')
     pays = db.relationship('Pay', backref='user', lazy='dynamic')
     vacations = db.relationship('Vacation', backref='user', lazy='dynamic')
-    created_at = Column(db.DateTime, nullable=False, default=datetime.utcnow)
+   # created_at = Column(db.DateTime, nullable=False, default=datetime.utcnow)
     # Supervisor
     is_supervisor = db.Column(db.Boolean, default=False)
     supervisor_id = db.Column(db.Integer, db.ForeignKey('users.id'))

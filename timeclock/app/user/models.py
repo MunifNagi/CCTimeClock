@@ -205,12 +205,12 @@ class User(UserMixin, SurrogatePK, Model):
             self.password=password
         else:
             self.password = None
-        # if self.role is None:
-        #     if self.email == current_app.config['ADMIN']:
-        #         self.role = Role.query.filter_by(permissions=0xff).first()
-        #         self.validated = True
-        #     else:
-        #         self.role = Role.query.filter_by(default=True).first()
+        if self.role is None:
+            if self.email == current_app.config['ADMIN']:
+                self.role = Role.query.filter_by(permissions=0xff).first()
+                self.validated = True
+            else:
+                self.role = Role.query.filter_by(default=True).first()
         self.password_list = Password(p1='', p2='', p3='', p4='', p5='', last_changed=datetime.now())
     @property
     def is_supervisor(self):

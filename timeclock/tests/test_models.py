@@ -3,7 +3,7 @@
 import datetime as dt
 import time
 import pytest
-from app.user.models import User, Password
+from app.user.models import User, Password, Role, Permission
 from .factories import UserFactory
 @pytest.mark.usefixtures("db")
 class TestUser:
@@ -11,7 +11,7 @@ class TestUser:
 
     def test_get_by_id(self):
         """Get user by ID."""
-        user = User(email="test@records.nyc.gov",password="Password1")
+        user = User(email="test1@records.nyc.gov",password="Password1")
         user.save()
         retrieved = User.get_by_id(user.id)
         assert retrieved == user
@@ -63,3 +63,10 @@ class TestUser:
         assert user2.supervisor_id==user.id
         assert user2.is_supervisor==False
         assert user.is_supervisor==True
+    def test_roles(self):
+        """Add a role to a user."""
+        admin = Role.query.filter_by(id=3).first()
+        user = User.create(email="test@records.nyc.gov")
+        user.role=admin
+        user.save()
+        assert admin.permissions == 0xff

@@ -16,13 +16,6 @@ class TestUser:
         retrieved = User.get_by_id(user.id)
         assert retrieved == user
 
-    # def test_created_at_defaults_to_datetime(self):
-    #     """Test creation date."""
-    #     user = User(email="test@records.nyc.gov",password="Password1")
-    #     user.save()
-    #     assert bool(user.created_at)
-    #     assert isinstance(user.created_at, dt.datetime)
-
     def test_password_is_unreadable(self):
         """Test null password."""
         user = User(password="Password1")
@@ -63,10 +56,26 @@ class TestUser:
         assert user2.supervisor_id==user.id
         assert user2.is_supervisor==False
         assert user.is_supervisor==True
+
     def test_roles(self):
-        """Add a role to a user."""
-        admin = Role.query.filter_by(id=3).first()
-        user = User.create(email="test@records.nyc.gov")
-        user.role=admin
-        user.save()
-        assert admin.permissions == 0xff
+        """Add a role to a users."""
+        Role.insert_roles()
+        user= Role.query.filter_by(name="User").first()
+        admin = Role.query.filter_by(name="Administrator").first()
+        moderator=Role.query.filter_by(name="Moderator").first()
+
+        person1 = User.create(email="test1@records.nyc.gov")
+        person2= User.create(email="test2@records.nyc.gov")
+        person3= User.create(email="test3@records.nyc.gov")
+
+        person1.role=admin
+        person2.role=user
+        person3.role=moderator
+
+        person1.save()
+        person2.save()
+        person3.save()
+        assert person1.is_administrator() is True and person1.role.permissions == 0xff
+        assert person2.is_administrator() is False and person2.role.permissions == 0x01
+        assert person3.is_administrator() is False and person3.role.permissions == 0x80
+    

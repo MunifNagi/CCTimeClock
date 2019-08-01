@@ -57,6 +57,16 @@ class TestUser:
         assert user2.is_supervisor==False
         assert user.is_supervisor==True
 
+    def test_factory(self, db):
+        """Test user factory."""
+        user = UserFactory(password="31Cha@mbers")
+        db.session.commit()
+        assert bool(user.email)
+        assert user.is_administrator() is False
+        assert user.is_active is True
+        assert user.verify_password("31Chaambers") is False
+        assert user.verify_password("31Cha@mbers") is True
+
     def test_roles(self):
         """Add a role to a users."""
         Role.insert_roles()

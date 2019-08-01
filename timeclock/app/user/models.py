@@ -228,6 +228,9 @@ class User(UserMixin, SurrogatePK, Model):
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
+    def set_password(self, password):
+        """Set password."""
+        self.password_hash = generate_password_hash(password)
 
     @password.setter
     def password(self, password):

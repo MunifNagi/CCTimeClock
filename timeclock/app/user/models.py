@@ -86,7 +86,8 @@ class Permission:
     Used to provide user permissions and check to ensure users have proper rights.
     """
     USER = 0x01  # 0b00000001
-    ADMINISTER = 0x80  # 0b10000000
+    MODERATOR=0x80  # 0b10000000
+    ADMINISTER = 0xff
 
 
 class Role(SurrogatePK, Model):
@@ -108,8 +109,8 @@ class Role(SurrogatePK, Model):
         """
         roles = {
             'User': (Permission.USER, True),
-            'Moderator': (Permission.ADMINISTER, False),
-            'Administrator': (0xff, False)
+            'Moderator': (Permission.MODERATOR, False),
+            'Administrator': (Permission.ADMINISTER, False)
         }
         for r in roles:
             role = Role.query.filter_by(name=r).first()

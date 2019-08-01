@@ -1,4 +1,4 @@
-from flask_wtf import Form
+from flask_wtf import Form,FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, ValidationError, SelectField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
@@ -6,12 +6,35 @@ from app.user.models import User
 from app.utils import tags, divisions, roles
 
 
-class LoginForm(Form):
+class LoginForm(FlaskForm):
     """Used for registered users to log into the system."""
     email = StringField('Email', validators=[DataRequired(), Length(1, 64), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Log In')
+    def __init__(self, *args, **kwargs):
+        """Create instance."""
+        super(LoginForm, self).__init__(*args, **kwargs)
+        self.user = None
 
+    def validate(self):
+        """Validate the form."""
+        initial_validation = super(LoginForm, self).validate()
+        if not initial_validation:
+            return False
+
+        self.user = User.query.filter_by(email=self.email.data).first()
+        if not self.user:
+            self.email.errors.append("Unknown email")
+            return False
+
+        if not self.user.verify_password(self.password.data):
+            self.password.errors.append("Invalid password")
+            return False
+
+        if not self.user.is_active:
+            self.email.errors.append("User not activated")
+            return False
+        return True
 
 class RegistrationForm(Form):
     """Used to register new users into the system."""

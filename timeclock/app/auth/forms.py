@@ -219,7 +219,7 @@ class AdminRegistrationForm(FlaskForm):
         return is_email and valid_email and first_name and last_name and valid_div and valid_tag and valid_sup
 
 
-class ChangePasswordForm(Form):
+class ChangePasswordForm(FlaskForm):
     """Form for changing password"""
     old_password = PasswordField('Old password', validators=[DataRequired()])
     password = PasswordField('New password', validators=[
@@ -228,7 +228,7 @@ class ChangePasswordForm(Form):
     submit = SubmitField('Update Password')
 
 
-class PasswordResetRequestForm(Form):
+class PasswordResetRequestForm(FlaskForm):
     """Initial request form for password reset"""
     email = StringField('Email', validators=[DataRequired(), Length(1, 100),
                                              Email()])

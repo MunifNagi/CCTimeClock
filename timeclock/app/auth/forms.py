@@ -113,7 +113,7 @@ class RegistrationForm(Form):
             raise ValidationError('Password must contain at least one capital letter')
 
 
-class AdminRegistrationForm(Form):
+class AdminRegistrationForm(FlaskForm):
     """Used by admins to register new users into the system."""
     email = StringField('Email', validators=[DataRequired(), Length(1, 64), Email()])
     first_name = StringField("First name")
@@ -173,14 +173,14 @@ class AdminRegistrationForm(Form):
             return False
         return True
 
-    def validate_supervisor_email(self, email_field):
+    def validate_supervisor_email(self, supervisor_email_field):
         """
         Verifies that e-mails used for supervisors exist in the system.
 
         :param email_field:
         :return:
         """
-        user = User.query.filter_by(id=email_field.data).first()
+        user = User.query.filter_by(id=supervisor_email_field.data).first()
         if not user:
             # raise ValidationError('No account with that email exists')
             # flash('Invalid supervisor email', 'error')

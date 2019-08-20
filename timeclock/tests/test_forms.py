@@ -85,7 +85,7 @@ class TestAdminRegisterForm:
             last_name="chambers",
             division="Archives",
             tag=1,
-            supervisor_email=0
+            supervisor_email=1000
         )
         assert form.validate_on_submit() is False
         assert "Invalid supervisor" in form.supervisor_email.errors

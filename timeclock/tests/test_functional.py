@@ -5,10 +5,9 @@ See: http://webtest.readthedocs.org/
 """
 from flask import url_for
 
-from app.user.models import User
+from app.user.models import User, Role, Tag
 from app.auth.forms import LoginForm
 from .factories import UserFactory
-
 
 class TestLoggingIn:
     """Login."""
@@ -17,16 +16,14 @@ class TestLoggingIn:
         """Login successful."""
         # Goes to homepage
         res = testapp.get('/login')
-        print(res)
         # Fills out login form in navbar
         form = res.forms[0]
         form["email"] = user.email
         form["password"] = "Change4me"
         # Submits
         res = form.submit().follow()
-        res1 = testapp.get('/change_password')
-        assert res.status_code == 200 or res1.status_code == 200 
-
+        res = testapp.get('/change_password')
+        assert res.status_code == 200 
     def test_sees_error_message_if_password_is_incorrect(self, user, testapp):
         """Show error if password is incorrect."""
         # Goes to homepage
@@ -68,57 +65,59 @@ class TestLoggingIn:
         # sees error
         assert "Unknown email" in res
 
+class TestAdminRegistering:
+    """Register a user."""
 
-# class TestRegistering:
-#     """Register a user."""
+    def test_can_register(self, user, testapp,db):
+        """Register a new user."""
+        Role.insert_roles()
+        Tag.insert_tags()
+        old_count = len(User.query.all())
+        user.role=Role.query.filter_by(name="Administrator").first()
+        user.save()
+        #creating supervisor and increment # of users
+        user2= User(email="test2@records.nyc.gov")
+        user2.division="Archives"
+        user.supervisor=user2
+        user.supervisor_id=user2.id
+        db.session.commit()
+        old_count += 1
+        user2.is_supervisor= True
+        # assert user.is_administrator() is True
+        res = testapp.get('/login')
+        # Fills out login form in navbar
+        form = res.forms[0]
+        form["email"] = user.email
+        form["password"] = "Change4me"
+        # Goes to homepage
+        res = form.submit().follow()
+        # res.showbrowser()
+        res= testapp.get('/change_password')
+        assert res.status_code == 200
+        form = res.forms[0]
+        form["old_password"]="Change4me"
+        form["password"]="Munif1234"
+        form["password2"]="Munif1234"
+        res = form.submit().follow()
+        res.showbrowser()
+        res = testapp.get('/')
+        assert res.status_code == 200
+        # res.click(description="Register User",href=url_for('auth.admin_register'))
+        res = testapp.get("/admin_register")
+        assert res.status_code == 200  
+        res.showbrowser()
+        #Fills out the form
+        Registerform = res.forms[0]
+        Registerform["email"] = "test@records.nyc.gov"
+        Registerform["first_name"] = "Doris"
+        Registerform["last_name"] = "Chambers"
+        Registerform["division"] = "Archives"
+        Registerform["tag"] = 1
+        Registerform["supervisor_email"] = user2.id
+        Registerform["is_supervisor"]= False
+        Registerform["role"]= "User"
+        # Submits
+        res = Registerform.submit('Register')
+        # # A new user was created
+        assert len(User.query.all()) == old_count + 1
 
-#     def test_can_register(self, user, testapp):
-#         """Register a new user."""
-#         old_count = len(User.query.all())
-#         # Goes to homepage
-#         res = testapp.get("/")
-#         # Clicks Create Account button
-#         res = res.click("Create account")
-#         # Fills out the form
-#         form = res.forms["registerForm"]
-#         form["username"] = "foobar"
-#         form["email"] = "foo@bar.com"
-#         form["password"] = "secret"
-#         form["confirm"] = "secret"
-#         # Submits
-#         res = form.submit().follow()
-#         assert res.status_code == 200
-#         # A new user was created
-#         assert len(User.query.all()) == old_count + 1
-
-#     def test_sees_error_message_if_passwords_dont_match(self, user, testapp):
-#         """Show error if passwords don't match."""
-#         # Goes to registration page
-#         res = testapp.get(url_for("public.register"))
-#         # Fills out form, but passwords don't match
-#         form = res.forms["registerForm"]
-#         form["username"] = "foobar"
-#         form["email"] = "foo@bar.com"
-#         form["password"] = "secret"
-#         form["confirm"] = "secrets"
-#         # Submits
-#         res = form.submit()
-#         # sees error message
-#         assert "Passwords must match" in res
-
-#     def test_sees_error_message_if_user_already_registered(self, user, testapp):
-#         """Show error if user already registered."""
-#         user = UserFactory(active=True)  # A registered user
-#         user.save()
-#         # Goes to registration page
-#         res = testapp.get(url_for("public.register"))
-#         # Fills out form, but username is already registered
-#         form = res.forms["registerForm"]
-#         form["username"] = user.username
-#         form["email"] = "foo@bar.com"
-#         form["password"] = "secret"
-#         form["confirm"] = "secret"
-#         # Submits
-#         res = form.submit()
-#         # sees error
-#         assert "Username already registered" in res

@@ -2,6 +2,7 @@
 import os
 ENV = "development"
 TESTING = True
+MAIL_SENDER = 'Records Timeclock <RTimeclock@records.nyc.gov>'
 SQLALCHEMY_DATABASE_URI = 'postgresql://localhost:5432/timeclock_test'
 SECRET_KEY = "not-so-secret-in-tests"
 BCRYPT_LOG_ROUNDS = (

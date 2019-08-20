@@ -99,13 +99,11 @@ class TestAdminRegistering:
         form["password"]="Munif1234"
         form["password2"]="Munif1234"
         res = form.submit().follow()
-        res.showbrowser()
         res = testapp.get('/')
         assert res.status_code == 200
         # res.click(description="Register User",href=url_for('auth.admin_register'))
         res = testapp.get("/admin_register")
         assert res.status_code == 200  
-        res.showbrowser()
         #Fills out the form
         Registerform = res.forms[0]
         Registerform["email"] = "test@records.nyc.gov"

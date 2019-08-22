@@ -8,7 +8,8 @@ from app.app import create_app
 from app.database import db as _db
 
 from .factories import UserFactory
-
+from app.user.models import User, Role
+from flask_login import login_user
 
 @pytest.fixture
 def app():
@@ -48,3 +49,18 @@ def user(db):
     user = UserFactory(password="Change4me")
     db.session.commit()
     return user
+
+@pytest.fixture
+def admin(db):
+    Role.insert_roles()
+    """Create admin for the tests."""
+    admin = UserFactory(password="Change4me")
+    admin.role = Role.query.filter_by(name="Administrator").first()
+    admin.is_supervisor= True
+    db.session.commit()
+    return admin
+
+@pytest.fixture
+def authenticated_request(app):
+    with app.test_request_context():
+        return login_user(User(email="test@records.nyc.gov",password="Change4me"))

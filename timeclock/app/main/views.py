@@ -489,7 +489,7 @@ def request_timepunch():
         elif not current_user.supervisor:
             flash("You must have a supervisor to request a timepunch. If you believe a supervisor "
                   "should be assigned to you, please contact the system administrator.", category='error')
-            current_app.logger.error('Does not have a supervisor'.format(current_user.email))
+            current_app.logger.warn('Does not have a supervisor'.format(current_user.email))
         else:
             # Combine date and time fields
             date_string = form.punch_date.data.strftime('%m/%d/%Y ')

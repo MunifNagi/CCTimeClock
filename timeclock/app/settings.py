@@ -10,7 +10,7 @@ from environs import Env
 
 env = Env()
 env.read_env()
-
+MAIL_SENDER = 'Records Timeclock <RTimeclock@records.nyc.gov>'
 ENV = env.str("FLASK_ENV", default="production")
 DEBUG = ENV == "development"
 SQLALCHEMY_DATABASE_URI = env.str("DATABASE_URL")

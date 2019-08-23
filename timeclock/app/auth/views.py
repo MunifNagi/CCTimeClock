@@ -421,7 +421,7 @@ def user_profile(user_id):
         return redirect(url_for('main.user_list_page'))
 
     if form.validate_on_submit():
-        if user.email == form.supervisor_email.data:
+        if user.id == form.supervisor_email.data:
             flash('A user cannot be their own supervisor. Please revise your supervisor '
                   'field.', category='error')
         else:

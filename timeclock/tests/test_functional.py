@@ -42,7 +42,7 @@ class TestLoggingIn:
         assert "Invalid password" in res
 
     def test_sees_error_message_if_user_is_inactive (self, user, testapp):
-        """Show error if password is incorrect."""
+        """Show error if user is inactive."""
         # Goes to homepage
         res = testapp.get("/login")
         #make user inactive
@@ -68,6 +68,22 @@ class TestLoggingIn:
         res = form.submit()
         # sees error
         assert "Unknown email" in res
+
+    def test_login_not_validated_user (self, user, testapp):
+        """Redirect not validated user to change password page"""
+        # Goes to homepage
+        res = testapp.get("/login")
+        #make user not validated
+        user.validated=False
+        # Fills out login form
+        form = res.forms[0]
+        form["email"] = user.email
+        form["password"] = "Change4me"
+        # Submits
+        res = form.submit().follow()
+        res= testapp.get('/')
+        assert res.status_code != 200
+        
 
 class TestAdminRegistering:
     """Register a user."""
@@ -102,7 +118,7 @@ class TestAdminRegistering:
 class TestChangeUserInfo:
     """Change user's info."""
 
-    def test_change_user(self, admin, user, testapp,db):
+    def test_change_user_successful(self, admin, user, testapp,db):
         """Change user's info"""
         Tag.insert_tags()
         res = testapp.get('/login')
@@ -127,7 +143,49 @@ class TestChangeUserInfo:
         res = changeform.submit('submit', value="Update").follow()
         assert res.status_code == 200
         # User has been updated
-    
+        assert 'User information has been updated' in res
+
+    def test_sees_error_message_if_user_their_own_supervisor(self, admin, user, testapp,db):
+        """User cannot be their own supervisor"""
+        Tag.insert_tags()
+        res = testapp.get('/login')
+        user.is_supervisor= True
+        # Fills out login form in navbar
+        form = res.forms[0]
+        form["email"] = admin.email
+        form["password"] = "Change4me"
+        # Goes to homepage
+        res = form.submit().follow()
+        res = testapp.get("/user/"+str(user.id))
+        #Fills out the form
+        changeform = res.forms[0]
+        changeform["first_name"] = "Doris"
+        changeform["last_name"] = "Chambers"
+        changeform["division"] = "Archives"
+        changeform["tag"] = 1
+        changeform["supervisor_email"] = user.id
+        changeform["is_supervisor"]= False
+        changeform["is_active"]= True
+        changeform["role"]= "User"
+        # Submits
+        res = changeform.submit('submit', value="Update")
+        # User has been updated
+        assert 'A user cannot be their own supervisor. Please revise your supervisor' in res
+
+    def test_sees_error_message_if_admin_their_own_supervisor(self, admin, testapp,db):
+        """User cannot be their own supervisor"""
+        Tag.insert_tags()
+        res = testapp.get('/login')
+        # Fills out login form in navbar
+        form = res.forms[0]
+        form["email"] = admin.email
+        form["password"] = "Change4me"
+        # Goes to homepage
+        res = form.submit().follow()
+        res = testapp.get("/user/"+str(admin.id)).follow()
+        print(res)
+        assert 'Admins cannot edit their own information.' in res
+
 class TestChangePassword:
     """Change Password"""
     def test_change_successful(self, testapp, user):
@@ -171,7 +229,7 @@ class TestChangePassword:
 class TestRequestTimePunch:
     """Request Time Punch"""
 
-    def test_request_successful(self, testapp, user,admin,db):
+    def test_Timepunch_successful(self, testapp, user,admin,db):
         """successful timepunch """
         user.supervisor=admin
         user.supervisor_id=admin.id
@@ -192,8 +250,8 @@ class TestRequestTimePunch:
         res =form.submit('submit', value="Submit Request").follow()
         res.mustcontain('<html>')
         assert 'Your timepunch request has been successfully submitted and is pending approval' in res
-
-    def test_request_unsuccessful(self, testapp, user,db):
+    
+    def test_TimePunch_unsuccessful(self, testapp, user,db):
         """Unsuccessful timepunch(No Supervisor)"""
         res = testapp.get('/login')
         # Fills out login form in navbar
@@ -203,11 +261,11 @@ class TestRequestTimePunch:
         # Goes to homepage
         res = form.submit().follow()
         res= testapp.get('/request_timepunch')
-        form = res.forms[0]
-        form["punch_type"]="In"
-        form["punch_date"]="2019-08-22"
-        form["punch_time"]="10:00"
-        form["note"]="just a test note"
-        res =form.submit('submit', value="Submit Request")
-        res.mustcontain('<html>')
+        punchform = res.forms[0]
+        punchform["punch_type"]="In"
+        punchform["punch_date"]="2019-08-22"
+        punchform["punch_time"]="10:00"
+        punchform["note"]="just a test note"
+        res =punchform.submit('submit', value="Submit Request")
+        # res.showbrowser()
         assert 'You must have a supervisor to request a timepunch. If you believe a supervisor should be assigned to you, please contact the system administrator.' in res
